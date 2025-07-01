@@ -51,10 +51,21 @@ server <- function(input, output, session) {
   # Reactive storage for data
   rv <- reactiveVal(generateData())
   
+  # Create a guess state, default to not submitted
+  state <- reactiveValues(
+    submitted = FALSE
+  )
+  
+  # Make sure guess state is updated when submit is pressed
+  observeEvent(input$submit, {
+    state$submitted <- TRUE
+  })
+  
   # Restart data
   observeEvent(input$reload, {
     rv(generateData())
     updateNumericInput(session, "guess", value = 0)
+    state$submitted <- FALSE
   })
   
   # Capture guess only on submit
@@ -82,23 +93,30 @@ server <- function(input, output, session) {
   
   # Feedback messaging
   output$feedback <- renderText({
-    req(input$submit > input$reload)
+    req(state$submitted)
     cor_val <- rv()$true_cor
-    err <- abs(guessVal() - cor_val)
-    if (err <= 0.01) {
-      "🤩 Godlike guess!"
-    } else if (err <= 0.05) {
-      "🎯 Very good guess!"
+    guess <- guessVal()
+    err <- abs(guess - cor_val)
+    sign_correct <- sign(guess) == sign(cor_val)
+    
+    if (!sign_correct) {
+      return("Wrong direction (sign). Try again!")
+    }
+    
+    if (err <= 0.05) {
+      "Perfect guess!"
+    } else if (err <= 0.1) {
+      "Very good guess!"
     } else if (err <= 0.20) {
-      "👍 Good guess."
+      "Good guess!"
     } else {
-      "❌ Bad guess."
+      "Almost. Try again!"
     }
   })
   
   # Display true correlation
   output$solution <- renderText({
-    req(input$submit > input$reload)
+    req(state$submitted)
     paste0("True correlation: ", round(rv()$true_cor, 2))
   })
 }
