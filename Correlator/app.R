@@ -13,23 +13,42 @@ library(ggplot2)
 
 # ---- UI ----
 ui <- fluidPage(
-  titlePanel("Correlation Guessing Game"),
-  sidebarLayout(
-    sidebarPanel(
-      numericInput("guess",
-                   "Your guess for cor(X, Y):",
-                   value = 0, step = 0.01),
-      actionButton("submit", "Submit Guess"),
-      actionButton("reload", "Restart"),
-      verbatimTextOutput("feedback"),
-      verbatimTextOutput("solution")
+  titlePanel("The Correlator"),
+  tabsetPanel(
+    tabPanel("Correlation Game",
+             sidebarLayout(
+               sidebarPanel(
+                 numericInput("guess",
+                              "Your guess for cor(X, Y):",
+                              value = 0, step = 0.01),
+                 actionButton("submit", "Submit Guess"),
+                 actionButton("reload", "Restart"),
+                 verbatimTextOutput("feedback"),
+                 verbatimTextOutput("solution")
+               ),
+               mainPanel(
+                 plotOutput(
+                   outputId = "scatter",
+                   width = "70%"
+                 )
+               )
+             )
     ),
-    mainPanel(
-      # Use 70% width; dynamic height maintains square aspect
-      plotOutput(
-        outputId = "scatter",
-        width = "70%"
-      )
+    tabPanel("Second Game",
+             fluidRow(
+               column(12,
+                      h3("Second game placeholder"),
+                      p("This space is reserved for your next game. Customize inputs and outputs here!")
+               )
+             )
+    ),
+    tabPanel("Third Game",
+             fluidRow(
+               column(12,
+                      h3("Third game placeholder"),
+                      p("This space is reserved for your third game. Add controls and outputs here!")
+               )
+             )
     )
   )
 )

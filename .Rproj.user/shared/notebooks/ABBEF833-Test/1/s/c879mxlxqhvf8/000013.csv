@@ -1,6 +1,0 @@
-"0","ggplot(data = data.frame(X, Y), aes(x = X, y = Y)) +"
-"0","  geom_point() +"
-"0","  labs(title = ""Scatter Plot of Y vs X"","
-"0","       x = ""X"","
-"0","       y = ""Y"") +"
-"0","  theme_minimal()"

@@ -12,12 +12,12 @@ library(ggplot2)
 
 # ---- UI ----
 ui <- fluidPage(
-  titlePanel("Multi-Tab Correlation Games"),
+  titlePanel("The Correlator Game"),
   tabsetPanel(
-    tabPanel("Game 1",
+    # Game 1: Multiple-choice correlation guess
+    tabPanel("Guess the Correlation (multiple choice)",
              sidebarLayout(
                sidebarPanel(
-                 # Dynamic multiple-choice input for correlation guesses
                  uiOutput("guess1_ui"),
                  actionButton("submit1", "Submit Guess"),
                  actionButton("reload1", "Restart"),
@@ -25,19 +25,18 @@ ui <- fluidPage(
                  verbatimTextOutput("solution1")
                ),
                mainPanel(
-                 plotOutput("scatter1", width = "70%")
+                 plotOutput("scatter1", width = "85%")
                )
              )
     ),
-    tabPanel("Game 2",
+    # Game 2: Numeric guess with linear/nonlinear toggle
+    tabPanel("Guess the Correlation (numeric input)",
              sidebarLayout(
                sidebarPanel(
                  radioButtons("mode2", "Data mechanism:",
-                              choices = list(
-                                "Linear only" = "linear",
-                                "Allow nonlinear" = "nonlinear"
-                              ),
-                              selected = "nonlinear"),
+                              choices = c("Linear only" = "linear", "Allow nonlinear" = "nonlinear"),
+                              selected = "linear"
+                 ),
                  numericInput("guess2", "Your guess for cor(X, Y):", value = 0, step = 0.01),
                  actionButton("submit2", "Submit Guess"),
                  actionButton("reload2", "Restart"),
@@ -45,10 +44,11 @@ ui <- fluidPage(
                  verbatimTextOutput("solution2")
                ),
                mainPanel(
-                 plotOutput("scatter2", width = "70%")
+                 plotOutput("scatter2", width = "85%")
                )
              )
     ),
+    # Game 3 placeholder
     tabPanel("Game 3",
              fluidRow(
                column(12,
@@ -144,36 +144,39 @@ server <- function(input, output, session) {
   })
   
   
-  # ==== GAME 2: Exponent-based generator ====  
-  genData2 <- function() {
-    X      <- runif(50, min = -10, max = 10)
-    C      <- runif(1, min = -4, max = 4)
-    E      <- sample(c(-1, 1, 2, 3), 1)
-    Y_base <- C * X^E
-    err_sd <- runif(1, min = 0, max = 3)
-    Y_noise <- Y_base + rnorm(length(X), mean = 0, sd = sd(Y_base) * err_sd)
+  # ==== GAME 2: Reactive data generator with linear/nonlinear mode ====  
+  data2 <- reactive({
+    
+    input$reload2  # Regenerate data on reload or mode change
+    
+    X <- runif(50, min = -10, max = 10)
+    C <- runif(1, min = -4, max = 4)
+    # Branch on the UI mode: linear-only forces exponent = 1
+    E <- if (isTRUE(input$mode2 == "linear")) {
+      1
+    } else {
+      sample(c(-1, 1, 2, 3), 1)
+    }
+    Y_base   <- C * X^E
+    err_sd   <- runif(1, min = 0, max = 3)
+    Y_noise  <- Y_base + rnorm(length(X), mean = 0, sd = sd(Y_base) * err_sd)
     Y_scaled <- (Y_noise - min(Y_noise)) / diff(range(Y_noise)) * 20 - 10
-    list(df = data.frame(X = X, Y = Y_scaled), true_cor = cor(X, Y_scaled))
-  }
-  
-  # Reactive values and state for Game 2
-  rv2    <- reactiveVal(genData2())
-  state2 <- reactiveValues(submitted = FALSE)
-  
-  # Game 2 observers
-  observeEvent(input$submit2, { state2$submitted <- TRUE })
-  observeEvent(input$reload2, {
-    rv2(genData2())
-    updateNumericInput(session, "guess2", value = 0)
-    state2$submitted <- FALSE
+    list(
+      df       = data.frame(X = X, Y = Y_scaled),
+      true_cor = cor(X, Y_scaled)
+    )
   })
   
-  # Game 2 guess and outputs
-  guess2_val <- eventReactive(input$submit2, { input$guess2 })
+  state2 <- reactiveValues(submitted = FALSE)
+  observeEvent(input$submit2, { state2$submitted <- TRUE })
+  observeEvent(input$reload2, { state2$submitted <- FALSE })
+  observeEvent(input$mode2, { state2$submitted <- FALSE })
   
   output$scatter2 <- renderPlot({
-    df <- rv2()$df
-    p  <- ggplot(df, aes(X, Y)) + geom_point() + coord_fixed() + theme_minimal() +
+    req(data2())
+    df <- data2()$df
+    p  <- ggplot(df, aes(X, Y)) +
+      geom_point() + coord_fixed() + theme_minimal() +
       labs(x = "X", y = "Y")
     if (state2$submitted) p <- p + geom_smooth(method = "lm", se = FALSE)
     p
@@ -181,24 +184,21 @@ server <- function(input, output, session) {
   
   output$feedback2 <- renderText({
     req(state2$submitted)
-    cor_val <- rv2()$true_cor
-    guess   <- guess2_val()
-    err     <- abs(guess - cor_val)
-    if (sign(guess) != sign(cor_val)) {
-      return("Wrong direction (sign). Try again!")
-    }
-    if (err <= 0.05)      "Perfect guess!"
-    else if (err <= 0.1)  "Very good guess!"
-    else if (err <= 0.2)  "Good guess!"
-    else                  "Almost. Try again!"
+    val   <- data2()$true_cor
+    guess <- input$guess2
+    err   <- abs(guess - val)
+    if (sign(guess) != sign(val))            "Wrong direction (sign)."
+    else if (err <= 0.05)                    "Perfect guess!"
+    else if (err <= 0.1)                     "Very good guess!"
+    else if (err <= 0.2)                     "Good guess!"
+    else                                     "Almost. Try again!"
   })
   
   output$solution2 <- renderText({
     req(state2$submitted)
-    sprintf("True correlation: %.2f", rv2()$true_cor)
+    sprintf("True correlation: %.2f", data2()$true_cor)
   })
 }
-# ---- Run App ----
-shinyApp(ui, server)
-
+  # ---- Run App ----
+  shinyApp(ui, server)
 
