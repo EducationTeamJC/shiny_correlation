@@ -1,6 +1,6 @@
 # Guess the Correlation Shiny App
 
-An interactive Shiny application where users try to estimate the correlation between two variables by looking at a scatterplot. This app is designed to help students and learners develop intuition for correlation and scatterplots.
+An interactive Shiny application where users can try to estimate the correlation between two variables by looking at a scatterplot. This app is designed to help students and learners develop intuition for correlation and scatterplots.
 
 ## Overview
 
