@@ -14,6 +14,20 @@ library(ggplot2)
 ui <- fluidPage(
   titlePanel("The Correlator Game"),
   tabsetPanel(
+    # Introduction tab
+    tabPanel("Introduction",
+             fluidRow(
+               column(12,
+                      h3("Welcome to The Correlator Game"),
+                      p("In this applet you will be able to practice with the Pearson's correlation and linearity in three different games."),
+                      h5("But what is Pearson's correlation?"),
+                      p("The Pearson's correlation (noted as 'r') is a statistical measure for the linear relationship between two continuous variables."),
+                      p(" • r = 1 indicates a perfect positive relationship (as x increases, y increases proportionally)."),
+                      p(" • r = -1 indicates a perfect negative relationship (as x increases, y decreases proportionally)."),
+                      p(" • r = 0 indicates no linear relationship.")
+               )
+             )
+    ),
     # Game 1: Multiple-choice correlation guess
     tabPanel("Guess the Correlation (multiple choice)",
              sidebarLayout(

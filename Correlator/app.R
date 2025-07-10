@@ -15,6 +15,15 @@ library(ggplot2)
 ui <- fluidPage(
   titlePanel("The Correlator"),
   tabsetPanel(
+    # Introduction tab
+    tabPanel("Introduction",
+             fluidRow(
+               column(12,
+                      h3("Welcome to The Correlator"),
+                      p("This section is reserved for an explanation of what this app is about.")
+               )
+             )
+    ),
     tabPanel("Correlation Game",
              sidebarLayout(
                sidebarPanel(
