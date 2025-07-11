@@ -49,9 +49,9 @@ ui <- fluidPage(
                column(6,
                       p("The correlation r between x and y is calculated using the following formula:"),
                       plotOutput("pearson_plot", width = "100%", height = "280px"),
-                      withMathJax(p("From this formula, we can see that for each pair of values \\((x_i, y_i)\\), we check how far each value is from its average (mean). This “distance from average” is then standardized by dividing by the standard deviation of \\(X\\) and \\(Y\\), so that the result doesn’t depend on the units (e.g., minutes vs. hours).")),
+                      withMathJax(p("From this formula, we can see that for each pair of values \\((x_i, y_i)\\), we check how far each value is from its average (mean). This “distance from average” is then standardized by dividing by the standard deviation of \\(X\\) and \\(Y\\), so that the result does not depend on the units (e.g., minutes vs. hours).")),
 
-                      withMathJax(p("You can imagine that if both \\(x_i\\) and \\(y_i\\) are relatively far above (or below) their averages — in other words, they move in the same direction — then they contribute positively to the correlation. If one is above average and the other is below, they contribute negatively.")),
+                      withMathJax(p("You can imagine that if both \\(x_i\\) and \\(y_i\\) are relatively the same distance above (or below) their averages — in other words, they move in the same direction — then they contribute positively to the correlation. If one is above average and the other is below, they contribute negatively.")),
 
                       withMathJax(p("These individual contributions are summed up and then divided by \\(n−1\\) to get the average: this is Pearson’s correlation coefficient, \\(r\\). It tells us how strongly and in what direction \\(X\\) and \\(Y\\) move together."))
                )
