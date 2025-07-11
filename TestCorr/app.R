@@ -9,6 +9,7 @@
 
 library(shiny)
 library(ggplot2)
+library(latex2exp)
 
 # ---- UI ----
 ui <- fluidPage(
@@ -20,11 +21,28 @@ ui <- fluidPage(
                column(12,
                       h3("Welcome to The Correlator Game"),
                       p("In this applet you will be able to practice with the Pearson's correlation and linearity in three different games."),
-                      h5("But what is Pearson's correlation?"),
-                      p("The Pearson's correlation (noted as 'r') is a statistical measure for the linear relationship between two continuous variables."),
-                      p(" • r = 1 indicates a perfect positive relationship (as x increases, y increases proportionally)."),
-                      p(" • r = -1 indicates a perfect negative relationship (as x increases, y decreases proportionally)."),
-                      p(" • r = 0 indicates no linear relationship.")
+                      h4("What is Pearson's correlation?"),
+                      p("The Pearson's correlation (noted as 'r') is a measure for direction and strength of a linear relationship between two continuous variables:"),
+                      tags$ul(
+                        tags$li("r = 1 indicates a perfect positive relationship (as x increases, y increases proportionally)"),
+                        tags$li("r = -1 indicates a perfect negative relationship (as x increases, y decreases proportionally)"),  
+                        tags$li("r = 0 indicates no linear relationship")
+                      )
+               )
+             ),
+             fluidRow(
+               column(6,
+                      h4("For the math enthousiasts among us:"),
+                      p("The correlation r between x and y is calculated using the following formula:"),
+                      plotOutput("pearson_plot", width = "100%", height = "280px")
+               ),
+               column(6,
+                      h4("Interpretation Guide"),
+                      p(strong("Strong correlations (|r| > 0.7):"), "Variables move together in a predictable way"),
+                      p(strong("Moderate correlations (0.3 < |r| < 0.7):"), "Some relationship exists but with more scatter"),
+                      p(strong("Weak correlations (|r| < 0.3):"), "Little to no linear relationship"),
+                      br(),
+                      p("Remember: Correlation does not imply causation! A strong correlation between two variables does not mean one causes the other.")
                )
              )
     ),
@@ -76,6 +94,37 @@ ui <- fluidPage(
 
 # ---- Server ----
 server <- function(input, output, session) {
+  # Output for intro tab
+  output$pearson_plot <- renderPlot({
+    # Create a plot that displays the Pearson correlation formula
+    p <- ggplot() + 
+      xlim(3, 7) + 
+      ylim(0, 5) +
+      # Main formula
+      annotate("text", x = 5, y = 3.5, 
+               label = TeX("$r = \\frac{1}{n-1} \\sum \\left(\\frac{x_i - \\bar{x}}{s_x}\\right) \\left(\\frac{y_i - \\bar{y}}{s_y}\\right)$"),
+               size = 8, hjust = 0.5) +
+      # Explanation of components
+      annotate("text", x = 5, y = 2.5, 
+               label = "Where:", 
+               size = 5, hjust = 0.5, fontface = "bold") +
+      annotate("text", x = 5, y = 2, 
+               label = TeX("$r$ = Pearson correlation coefficient"),
+               size = 5, hjust = 0.5) +
+      annotate("text", x = 5, y = 1.6, 
+               label = TeX("$n$ = number of data points"),
+               size = 5, hjust = 0.5) +
+      annotate("text", x = 5, y = 1.2, 
+               label = TeX("$\\bar{x}, \\bar{y}$ = sample means of $x$ and $y$"),
+               size = 5, hjust = 0.5) +
+      annotate("text", x = 5, y = 0.8, 
+               label = TeX("$s_x, s_y$ = sample standard deviations of $x$ and $y$"),
+               size = 5, hjust = 0.5) +
+      theme_void() +
+      theme(plot.margin = margin(0, 0, 0, 0))
+    p
+  })
+  
   
   # ==== GAME 1: Linear generator with multiple-choice guesses ====  
   genData1 <- function() {
