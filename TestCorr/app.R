@@ -8,6 +8,7 @@
 #
 
 library(shiny)
+library(shinyBS)
 library(ggplot2)
 library(latex2exp)
 
@@ -18,7 +19,7 @@ ui <- fluidPage(
     # Introduction tab
     tabPanel("Introduction",
              fluidRow(
-               column(12,
+               column(6,
                       h3("Welcome to The Correlator Game"),
                       p("In this applet you will be able to practice with the Pearson's correlation and linearity in three different games."),
                       h4("What is Pearson's correlation?"),
@@ -32,19 +33,29 @@ ui <- fluidPage(
              ),
              fluidRow(
                column(6,
-                      h4("For the math enthousiasts among us:"),
-                      p("The correlation r between x and y is calculated using the following formula:"),
-                      plotOutput("pearson_plot", width = "100%", height = "280px")
-               ),
-               column(6,
                       h4("Interpretation Guide"),
-                      p(strong("Strong correlations (|r| > 0.7):"), "Variables move together in a predictable way"),
-                      p(strong("Moderate correlations (0.3 < |r| < 0.7):"), "Some relationship exists but with more scatter"),
-                      p(strong("Weak correlations (|r| < 0.3):"), "Little to no linear relationship"),
+                      tags$ul(
+                        tags$li("Strong correlations (|r| > 0.7): Variables move together in a predictable way"),
+                        tags$li("Moderate correlations (0.3 < |r| < 0.7): Some relationship exists but with more scatter"),
+                        tags$li("Weak correlations (|r| < 0.3): Little to no linear relationship")
+                      ),
                       br(),
                       p("Remember: Correlation does not imply causation! A strong correlation between two variables does not mean one causes the other.")
                )
-             )
+               ),
+             bsCollapse(
+               id = "math_collapse", open = NULL,
+               bsCollapsePanel("For the math enthusiasts among us:",
+               column(6,
+                      p("The correlation r between x and y is calculated using the following formula:"),
+                      plotOutput("pearson_plot", width = "100%", height = "280px"),
+                      withMathJax(p("From this formula, we can see that for each pair of values \\((x_i, y_i)\\), we check how far each value is from its average (mean). This “distance from average” is then standardized by dividing by the standard deviation of \\(X\\) and \\(Y\\), so that the result doesn’t depend on the units (e.g., minutes vs. hours).")),
+
+                      withMathJax(p("You can imagine that if both \\(x_i\\) and \\(y_i\\) are relatively far above (or below) their averages — in other words, they move in the same direction — then they contribute positively to the correlation. If one is above average and the other is below, they contribute negatively.")),
+
+                      withMathJax(p("These individual contributions are summed up and then divided by \\(n−1\\) to get the average: this is Pearson’s correlation coefficient, \\(r\\). It tells us how strongly and in what direction \\(X\\) and \\(Y\\) move together."))
+               )
+             ))
     ),
     # Game 1: Multiple-choice correlation guess
     tabPanel("Guess the Correlation (multiple choice)",
