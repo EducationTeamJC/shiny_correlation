@@ -33,24 +33,21 @@ ui <- fluidPage(
       }
       
       .sidebar-logo {
-        width: 80%;
-        margin: 1.5em auto;
-        text-align: center;
-        position: absolute;
-        bottom: 10vh;
-        left: 70%;
-        transform: translateX(-50%);
+        width: 100%;
+        margin: 2em 0 1em 0;
+        text-align: left;
+        position: relative;
       }
       .sidebar-logo img {
-        width: 100%;
+        width: 80%;
         height: auto;
-        max-width: 12em;
+        max-width: 10em;
       }
       .logo-text {
-        font-size: 1.1em;
+        font-size: 0.9em;
         color: #666;
-        margin-top: 0.8em;
-        text-align: center;
+        margin-top: 0.5em;
+        text-align: left;
       }
       .logo-text a {
         color: #2196F3;
@@ -59,23 +56,10 @@ ui <- fluidPage(
       .logo-text a:hover {
         text-decoration: underline;
       }
-      /* Ensure the sidebar has relative positioning for absolute positioning to work */
+      /* Remove the absolute positioning requirements */
       .col-sm-4 {
         position: relative;
         min-height: 100vh;
-        padding-bottom: 10vh;
-      }
-      
-      /* Introduction tab needs relative positioning for absolute logo */
-      .tab-content {
-        position: relative;
-      }
-      .intro-logo-text a {
-        color: #2196F3;
-        text-decoration: none;
-      }
-      .intro-logo-text a:hover {
-        text-decoration: underline;
       }
     "))
   ),
@@ -105,17 +89,9 @@ ui <- fluidPage(
                       ),
                       p("Remember: Correlation does not imply causation! A strong correlation between two variables does not mean one causes the other."),
                       
-                      # Logo positioned absolutely to not interfere with layout
-                      div(style = "position: absolute; top: 20px; right: 60px; text-align: center; z-index: 10;",
-                          img(src = "umc_utrecht_logo.png", alt = "UMC Utrecht Logo", style = "width: 200px; height: auto;"),
-                          div(style = "font-size: 14px; color: #666; margin-top: 15px; line-height: 1.3;", 
-                              HTML("Created by <a href='https://www.linkedin.com/in/merlin-urbanski-151ba3268' target='_blank' style='color: #2196F3; text-decoration: none;'>Merlin Urbanski</a>"), br(),
-                              HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/about/' target='_blank' style='color: #2196F3; text-decoration: none;'>UMCU biostatistics teaching team</a>"))
-                      ),
-                      
                       bsCollapse(
                         id = "math_collapse", open = NULL,
-                        bsCollapsePanel("For the math enthusiasts among us:",
+                        bsCollapsePanel("For the math enthusiasts among us (click to expand)",
                                         column(6,
                                                p("The correlation r between x and y is calculated using the following formula:"),
                                                plotOutput("pearson_plot", width = "100%", height = "280px"),
@@ -125,7 +101,16 @@ ui <- fluidPage(
                                                
                                                withMathJax(p("These individual contributions are summed up and then divided by \\(n−1\\) to get the average: this is Pearson's correlation coefficient, \\(r\\). It tells us how strongly and in what direction \\(X\\) and \\(Y\\) move together."))
                                         )
-                        ))
+                        )),
+                      
+                      hr(),
+                      # Logo at bottom left
+                      div(class = "sidebar-logo",
+                          img(src = "umc_utrecht_logo.png", alt = "UMC Utrecht Logo"),
+                          div(class = "logo-text", 
+                              HTML("Created by <a href='https://www.linkedin.com/in/merlin-urbanski-151ba3268' target='_blank'>Merlin Urbanski</a>"), br(),
+                              HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/people/' target='_blank'>UMCU biostatistics teaching team</a>"))
+                      )
                )
              )
     ),
@@ -141,12 +126,13 @@ ui <- fluidPage(
                  actionButton("reload1", "Restart"),
                  verbatimTextOutput("feedback1"),
                  verbatimTextOutput("solution1"),
+                 hr(),
                  # Logo in sidebar
                  div(class = "sidebar-logo",
                      img(src = "umc_utrecht_logo.png", alt = "UMC Utrecht Logo"),
                      div(class = "logo-text", 
                          HTML("Created by <a href='https://www.linkedin.com/in/merlin-urbanski-151ba3268' target='_blank'>Merlin Urbanski</a>"), br(),
-                         HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/about/' target='_blank'>UMCU biostatistics teaching team</a>"))
+                         HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/people/' target='_blank'>UMCU biostatistics teaching team</a>"))
                  )
                ),
                mainPanel(
@@ -188,12 +174,13 @@ ui <- fluidPage(
                  verbatimTextOutput("solution2"),
                  verbatimTextOutput("feedback2_spearman"),
                  verbatimTextOutput("solution2_spearman"),
+                 hr(),
                  # Logo in sidebar
                  div(class = "sidebar-logo",
                      img(src = "umc_utrecht_logo.png", alt = "UMC Utrecht Logo"),
                      div(class = "logo-text", 
                          HTML("Created by <a href='https://www.linkedin.com/in/merlin-urbanski-151ba3268' target='_blank'>Merlin Urbanski</a>"), br(),
-                         HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/about/' target='_blank'>UMCU biostatistics teaching team</a>"))
+                         HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/people/' target='_blank'>UMCU biostatistics teaching team</a>"))
                  )
                ),
                mainPanel(
@@ -206,7 +193,7 @@ ui <- fluidPage(
              sidebarLayout(
                sidebarPanel(
                  h4("Instruction:", style = "color: #2196F3; margin-bottom: 10px;"),
-                 p("Select the correct data generating mechanism (the true underlying relationship between X and Y in the scatterplot) from the five options below.", 
+                 p("Select the correct data generating mechanism (the true underlying relationship between X and Y in the scatterplot) from the five options below, and also indicate whether the relationship is positive or negative.", 
                    style = "margin-bottom: 20px; padding: 10px; background-color: #f8f9fa; border-left: 3px solid #2196F3;"),
                  radioButtons("guess3", "Select the data generating mechanism:",
                               choices = c("Linear" = "linear",
@@ -216,16 +203,22 @@ ui <- fluidPage(
                                           "Logarithmic" = "logarithmic"),
                               selected = "linear"
                  ),
+                 radioButtons("guess3_sign", "Select the relationship direction:",
+                              choices = c("Positive" = "positive",
+                                          "Negative" = "negative"),
+                              selected = "positive"
+                 ),
                  actionButton("submit3", "Submit Guess"),
                  actionButton("reload3", "Restart"),
                  verbatimTextOutput("feedback3"),
                  verbatimTextOutput("solution3"),
+                 hr(),
                  # Logo in sidebar
                  div(class = "sidebar-logo",
                      img(src = "umc_utrecht_logo.png", alt = "UMC Utrecht Logo"),
                      div(class = "logo-text", 
                          HTML("Created by <a href='https://www.linkedin.com/in/merlin-urbanski-151ba3268' target='_blank'>Merlin Urbanski</a>"), br(),
-                         HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/about/' target='_blank'>UMCU biostatistics teaching team</a>"))
+                         HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/people/' target='_blank'>UMCU biostatistics teaching team</a>"))
                  )
                ),
                mainPanel(
@@ -246,7 +239,7 @@ server <- function(input, output, session) {
       ylim(0, 5) +
       # Main formula
       annotate("text", x = 5, y = 3.5, 
-               label = TeX("$r = \\frac{1}{n-1} \\sum \\left(\\frac{x_i - \\bar{x}}{s_x}\\right) \\left(\\frac{y_i - \\bar{y}}{s_y}\\right)$"),
+               label = TeX("$r = \\frac{1}{n-1} \\sum_{i=1}^{n} \\left(\\frac{x_i - \\bar{x}}{s_x}\\right) \\left(\\frac{y_i - \\bar{y}}{s_y}\\right)$"),
                size = 8, hjust = 0.5) +
       # Explanation of components
       annotate("text", x = 5, y = 2.5, 
@@ -326,9 +319,18 @@ server <- function(input, output, session) {
   # Outputs for Game 1
   output$scatter1 <- renderPlot({
     df <- rv1()$df
-    p  <- ggplot(df, aes(X, Y)) + geom_point() + coord_fixed() + theme_minimal() +
+    p  <- ggplot(df, aes(X, Y)) + 
+      geom_point(size = 3, alpha = 0.7) + 
+      coord_fixed() + 
+      theme_minimal() +
+      theme(
+        axis.text = element_text(size = 14),
+        axis.title = element_text(size = 16, face = "bold"),
+        axis.title.y = element_text(angle = 0, vjust = 0.5),
+        plot.title = element_text(size = 18, face = "bold")
+      ) +
       labs(x = "X", y = "Y")
-    if (state1$submitted) p <- p + geom_smooth(method = "lm", se = FALSE)
+    if (state1$submitted) p <- p + geom_smooth(method = "lm", se = FALSE, size = 1.5)
     p
   }, height = function() session$clientData$output_scatter1_width * 0.7)
   
@@ -414,9 +416,17 @@ server <- function(input, output, session) {
     req(data2())
     df <- data2()$df
     p  <- ggplot(df, aes(X, Y)) +
-      geom_point() + coord_fixed() + theme_minimal() +
+      geom_point(size = 3, alpha = 0.7) + 
+      coord_fixed() + 
+      theme_minimal() +
+      theme(
+        axis.text = element_text(size = 14),
+        axis.title = element_text(size = 16, face = "bold"),
+        axis.title.y = element_text(angle = 0, vjust = 0.5),
+        plot.title = element_text(size = 18, face = "bold")
+      ) +
       labs(x = "X", y = "Y")
-    if (state2$submitted || state2$submitted_spearman) p <- p + geom_smooth(method = "lm", se = FALSE)
+    if (state2$submitted || state2$submitted_spearman) p <- p + geom_smooth(method = "lm", se = FALSE, size = 1.5)
     p
   }, height = function() session$clientData$output_scatter2_width * 0.7)
   
@@ -465,40 +475,44 @@ server <- function(input, output, session) {
       # Generate Y using a linear relationship
       C <- runif(1, min = -4, max = 4)
       Y_base   <- C * X
-      err_sd   <- runif(1, min = 0.3, max = 0.7)
+      err_sd   <- runif(1, min = 0.3, max = 0.5)
       Y_noise  <- Y_base + rnorm(length(X), mean = 0, sd = sd(Y_base) * err_sd)
       Y_scaled <- (Y_noise - min(Y_noise)) / diff(range(Y_noise)) * 20 - 10
       relationship <- "linear"
+      relationship_sign <- ifelse(C > 0, "positive", "negative")
       
     } else if (mm == 2) {
       # Generate Y using a quadratic relationship
       C <- runif(1, min = -4, max = 4)
       E <- 2 # Fixed exponent for quadratic
       Y_base   <- C * X^E
-      err_sd   <- runif(1, min = 0.3, max = 0.7)
+      err_sd   <- runif(1, min = 0.3, max = 0.5)
       Y_noise  <- Y_base + rnorm(length(X), mean = 0, sd = sd(Y_base) * err_sd)
       Y_scaled <- (Y_noise - min(Y_noise)) / diff(range(Y_noise)) * 20 - 10
       relationship <- "quadratic"
+      relationship_sign <- ifelse(C > 0, "positive", "negative")
       
     } else if (mm == 3) {
       # Generate Y using a cubic relationship
       C <- runif(1, min = -4, max = 4)
       E <- 3 # Fixed exponent for cubic
       Y_base   <- C * X^E
-      err_sd   <- runif(1, min = 0.3, max = 0.7)
+      err_sd   <- runif(1, min = 0.1, max = 0.3)
       Y_noise  <- Y_base + rnorm(length(X), mean = 0, sd = sd(Y_base) * err_sd)
       Y_scaled <- (Y_noise - min(Y_noise)) / diff(range(Y_noise)) * 20 - 10
       relationship <- "cubic"
+      relationship_sign <- ifelse(C > 0, "positive", "negative")
       
     } else if (mm == 4){
       # Generate Y using an exponential relationship
       C <- sample(c(-5, -4, 4, 5), size = 1)
       E <- runif(1, min = 0.3, max = 0.9) # Random exponent for exponential
       Y_base   <- C * exp(E * X)
-      err_sd   <- runif(1, min = 0, max = 0.7)
+      err_sd   <- runif(1, min = 0, max = 0.3)
       Y_noise  <- Y_base + rnorm(length(X), mean = 0, sd = sd(Y_base) * err_sd)
       Y_scaled <- (Y_noise - min(Y_noise)) / diff(range(Y_noise)) * 20 - 10
       relationship <- "exponential"
+      relationship_sign <- ifelse(C > 0, "positive", "negative")
       
     } else {
       # Generate Y using a logarithmic relationship
@@ -506,15 +520,17 @@ server <- function(input, output, session) {
       E <- runif(1, min = 5, max = 7) # Random exponent for logarithmic
       X_pos <- X - min(X) + 1   # now X_pos ∈ [1, 21]
       Y_base   <- C * log(E * X_pos + 1) # Adding 1 to avoid log(0)
-      err_sd   <- runif(1, min = 0, max = 0.5)
+      err_sd   <- runif(1, min = 0, max = 0.3)
       Y_noise  <- Y_base + rnorm(length(X), mean = 0, sd = sd(Y_base) * err_sd)
       Y_scaled <- (Y_noise - min(Y_noise)) / diff(range(Y_noise)) * 20 - 10
       relationship <- "logarithmic"
+      relationship_sign <- ifelse(C > 0, "positive", "negative")
     }
     
     list(
       df = data.frame(X = X, Y = Y_scaled),
-      true_relationship = relationship
+      true_relationship = relationship,
+      true_relationship_sign = relationship_sign
     )
   }
   
@@ -527,12 +543,24 @@ server <- function(input, output, session) {
   observeEvent(input$reload3, {
     rv3(genData3())
     state3$submitted <- FALSE
+    # Reset input values
+    updateRadioButtons(session, "guess3", selected = "linear")
+    updateRadioButtons(session, "guess3_sign", selected = "positive")
   })
   
   # Outputs for Game 3
   output$scatter3 <- renderPlot({
     df <- rv3()$df
-    p  <- ggplot(df, aes(X, Y)) + geom_point() + coord_fixed() + theme_minimal() +
+    p  <- ggplot(df, aes(X, Y)) + 
+      geom_point(size = 3, alpha = 0.7) + 
+      coord_fixed() + 
+      theme_minimal() +
+      theme(
+        axis.text = element_text(size = 14),
+        axis.title = element_text(size = 16, face = "bold"),
+        axis.title.y = element_text(angle = 0, vjust = 0.5),
+        plot.title = element_text(size = 18, face = "bold")
+      ) +
       labs(x = "X", y = "Y")
     p
   }, height = function() session$clientData$output_scatter3_width * 0.7)
@@ -540,17 +568,29 @@ server <- function(input, output, session) {
   output$feedback3 <- renderText({
     req(state3$submitted)
     true_rel <- rv3()$true_relationship
-    guess    <- input$guess3
-    if (guess == true_rel) {
+    true_sign <- rv3()$true_relationship_sign
+    guess_rel <- input$guess3
+    guess_sign <- input$guess3_sign
+    
+    rel_correct <- (guess_rel == true_rel)
+    sign_correct <- (guess_sign == true_sign)
+    
+    if (rel_correct && sign_correct) {
       "Correct! Well done!"
+    } else if (rel_correct && !sign_correct) {
+      "Partially correct! You got the relationship type right, but the direction (positive/negative) wrong."
+    } else if (!rel_correct && sign_correct) {
+      "Partially correct! You got the direction (positive/negative) right, but the relationship type wrong."
     } else {
-      "Incorrect. Try to look at the shape of the relationship more carefully."
+      "Incorrect. Try to look at both the shape of the relationship and its direction more carefully."
     }
   })
   
   output$solution3 <- renderText({
     req(state3$submitted)
-    paste0("True relationship: ", rv3()$true_relationship)
+    true_rel <- rv3()$true_relationship
+    true_sign <- rv3()$true_relationship_sign
+    paste0("True relationship: ", true_rel, " (", true_sign, ")")
   })
 }
 
