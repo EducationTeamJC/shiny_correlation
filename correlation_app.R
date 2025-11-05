@@ -6,225 +6,213 @@
 #
 #    https://shiny.posit.co/
 #
+# Function to check and install packages if not already installed
+check_and_install <- function(packages) {
+  for (pkg in packages) {
+    if (!require(pkg, character.only = TRUE, quietly = TRUE)) {
+      cat("Installing package:", pkg, "\n")
+      install.packages(pkg, dependencies = TRUE)
+      library(pkg, character.only = TRUE)
+    }
+  }
+}
+
+# List of required packages
+required_packages <- c("shiny", "ggplot2", "shinydashboard", "shinyBS", "latex2exp")
+
+# Check and install packages
+check_and_install(required_packages)
 
 library(shiny)
 library(shinyBS)
 library(ggplot2)
 library(latex2exp)
+library(shinydashboard)
 
 # ---- UI ----
-ui <- fluidPage(
-  # Add custom CSS for the logo positioning
-  tags$head(
-    tags$style(HTML("
-      /* Header styling */
-      .navbar-default {
-        background-color: #2196F3 !important;
-        border: none !important;
-        margin-bottom: 0 !important;
-      }
-
-      h1 {
-        background-color: #2196F3;
-        color: white !important;
-        margin: 0 !important;
-        padding: 1em 1.5em;
-        font-weight: 500;
-      }
-
-      .sidebar-logo {
-        width: 100%;
-        margin: 2em 0 1em 0;
-        text-align: left;
-        position: relative;
-      }
-      .sidebar-logo img {
-        width: 80%;
-        height: auto;
-        max-width: 10em;
-      }
-      .logo-text {
-        font-size: 0.9em;
-        color: #666;
-        margin-top: 0.5em;
-        text-align: left;
-      }
-      .logo-text a {
-        color: #2196F3;
-        text-decoration: none;
-      }
-      .logo-text a:hover {
-        text-decoration: underline;
-      }
-      /* Remove the absolute positioning requirements */
-      .col-sm-4 {
-        position: relative;
-        min-height: 100vh;
-      }
-    "))
+ui <- dashboardPage(
+  dashboardHeader(
+    title = "The Correlation Game",
+    tags$li(
+      class = "dropdown",
+      style = "padding: 0px; margin-right: 10px;",
+      downloadButton("download_app", label = "Download", icon = icon("download"))
+    )
   ),
-
-  titlePanel("The Correlation Game"),
-
-  tabsetPanel(
-    # Introduction tab
-    tabPanel("Introduction",
-             fluidRow(
-               column(12,
-                      h3("Welcome to The Correlation Game"),
-                      p("In this applet you will be able to practice with the Pearson's correlation and linearity in three different games."),
-
-                      h4("What is Pearson's correlation?"),
-                      p("The Pearson's correlation (noted as 'r') is a measure for direction and strength of a linear relationship between two continuous variables:"),
-                      tags$ul(
-                        tags$li("r = 1 indicates a perfect positive relationship (as x increases, y increases proportionally)"),
-                        tags$li("r = -1 indicates a perfect negative relationship (as x increases, y decreases proportionally)"),
-                        tags$li("r = 0 indicates no linear relationship")
-                      ),
-                      h4("Interpretation Guide"),
-                      tags$ul(
-                        tags$li("Strong correlations (|r| > 0.7): Variables move together in a predictable way"),
-                        tags$li("Moderate correlations (0.3 < |r| < 0.7): Some relationship exists but with more scatter"),
-                        tags$li("Weak correlations (|r| < 0.3): Little to no linear relationship")
-                      ),
-                      p("Remember: Correlation does not imply causation! A strong correlation between two variables does not mean one causes the other."),
-
-                      bsCollapse(
-                        id = "math_collapse", open = NULL,
-                        bsCollapsePanel("For the math enthusiasts among us (click to expand)",
-                                        column(6,
-                                               p("The correlation r between x and y is calculated using the following formula:"),
-                                               plotOutput("pearson_plot", width = "100%", height = "280px"),
-                                               withMathJax(p("From this formula, we can see that for each pair of values \\((x_i, y_i)\\), we check how far each value is from its average (mean). This \"distance from average\" is then standardized by dividing by the standard deviation of \\(X\\) and \\(Y\\), so that the result does not depend on the units (e.g., minutes vs. hours).")),
-
-                                               withMathJax(p("You can imagine that if both \\(x_i\\) and \\(y_i\\) are relatively the same distance above (or below) their averages (in other words, they move in the same direction) then they contribute positively to the correlation. If one is above average and the other is below, they contribute negatively.")),
-
-                                               withMathJax(p("These individual contributions are summed up and then divided by \\(n−1\\) to get the average: this is Pearson's correlation coefficient, \\(r\\). It tells us how strongly and in what direction \\(X\\) and \\(Y\\) move together."))
-                                        )
-                        )),
-
-                      hr(),
-                      # Logo at bottom left
-                      div(class = "sidebar-logo",
-                          img(src = "umc_utrecht_logo.png", alt = "UMC Utrecht Logo"),
-                          div(class = "logo-text",
-                              HTML("Created by Merlin Urbanski"), br(),
-                              HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/people/' target='_blank'>UMCU biostatistics teaching team</a>"))
-                      )
-               )
-             )
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("Introduction", tabName = "intro", icon = icon("circle-info")),
+      menuItem("Guess: Multiple Choice", tabName = "game1", icon = icon("list-check")),
+      menuItem("Guess: Numeric", tabName = "game2", icon = icon("keyboard")),
+      menuItem("Guess: Relationship", tabName = "game3", icon = icon("diagram-project"))
+    )
+  ),
+  dashboardBody(
+    tags$head(
+      tags$style(HTML(
+        "#download_app {\n  background: transparent !important;\n  border: none !important;\n  box-shadow: none !important;\n  color: #fff !important;\n}\n#download_app:hover,\n#download_app:focus,\n#download_app:active {\n  background: transparent !important;\n  border: none !important;\n  box-shadow: none !important;\n}\n.sidebar-logo img { width: 80%; height: auto; max-width: 10em; }\n.logo-text { font-size: 0.9em; color: #666; margin-top: 0.5em; text-align: left; }\n.logo-text a { color: #2196F3; text-decoration: none; }\n.logo-text a:hover { text-decoration: underline; }"
+      ))
     ),
-    # Game 1: Multiple-choice correlation guess
-    tabPanel("Guess the Correlation (multiple choice)",
-             sidebarLayout(
-               sidebarPanel(
-                 h4("Instruction:", style = "color: #2196F3; margin-bottom: 10px;"),
-                 p("Out of the four options select the correct correlation strength between X and Y that you see in the scatterplot.",
-                   style = "margin-bottom: 20px; padding: 10px; background-color: #f8f9fa; border-left: 3px solid #2196F3;"),
-                 uiOutput("guess1_ui"),
-                 actionButton("submit1", "Submit Guess"),
-                 actionButton("reload1", "Restart"),
-                 verbatimTextOutput("feedback1"),
-                 verbatimTextOutput("solution1"),
-                 hr(),
-                 # Logo in sidebar
-                 div(class = "sidebar-logo",
-                     img(src = "umc_utrecht_logo.png", alt = "UMC Utrecht Logo"),
-                     div(class = "logo-text",
-                         HTML("Created by Merlin Urbanski"), br(),
-                         HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/people/' target='_blank'>UMCU biostatistics teaching team</a>"))
-                 )
-               ),
-               mainPanel(
-                 plotOutput("scatter1", width = "85%")
-               )
-             )
-    ),
-    # Game 2: Numeric guess with linear/nonlinear toggle
-    tabPanel("Guess the Correlation (numeric input)",
-             sidebarLayout(
-               sidebarPanel(
-                 h4("Instruction:", style = "color: #2196F3; margin-bottom: 10px;"),
-                 p("Guess the correlation strength that you see between X and Y in the scatterplot by typing it in the field. You can select the data generating mechanism (the true underlying relationship between X and Y in the scatterplot) between \"Linear only\" (easy) and \"Allow nonlinear\" (harder). Optionally you can try to guess the ranked based Spearman correlation and see how it differs from the \"normal\" Pearson correlation.",
-                   style = "margin-bottom: 20px; padding: 10px; background-color: #f8f9fa; border-left: 3px solid #2196F3;"),
-                 radioButtons("mode2", "Data mechanism:",
-                              choices = c("Linear only" = "linear", "Allow nonlinear" = "nonlinear"),
-                              selected = "linear"
-                 ),
-                 h4("Pearson Correlation"),
-                 numericInput("guess2", "Your guess for cor(X, Y):", value = 0, step = 0.01),
-                 actionButton("submit2", "Submit Guess"),
-                 br(), br(),
-
-                 # Collapsible panel for Spearman correlation
-                 tags$details(
-                   tags$summary("Advanced: Spearman Correlation",
-                                style = "cursor: pointer; font-weight: bold; color: #337ab7;"),
-                   br(),
-                   p("Spearman correlation measures monotonic relationships using ranks instead of raw values.",
-                     style = "font-size: 12px; color: #666;"),
-                   numericInput("guess2_spearman", "Your guess for Spearman cor(X, Y):",
-                                value = 0, step = 0.01),
-                   actionButton("submit2_spearman", "Submit Spearman Guess")
-                 ),
-
-                 br(),
-                 actionButton("reload2", "Restart"),
-                 verbatimTextOutput("feedback2"),
-                 verbatimTextOutput("solution2"),
-                 verbatimTextOutput("feedback2_spearman"),
-                 verbatimTextOutput("solution2_spearman"),
-                 hr(),
-                 # Logo in sidebar
-                 div(class = "sidebar-logo",
-                     img(src = "umc_utrecht_logo.png", alt = "UMC Utrecht Logo"),
-                     div(class = "logo-text",
-                         HTML("Created by Merlin Urbanski"), br(),
-                         HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/people/' target='_blank'>UMCU biostatistics teaching team</a>"))
-                 )
-               ),
-               mainPanel(
-                 plotOutput("scatter2", width = "85%")
-               )
-             )
-    ),
-    # Game 3: Guess the data relationship
-    tabPanel("Guess the Data Relationship",
-             sidebarLayout(
-               sidebarPanel(
-                 h4("Instruction:", style = "color: #2196F3; margin-bottom: 10px;"),
-                 p("Select the correct data generating mechanism (the true underlying relationship between X and Y in the scatterplot) from the five options below, and also indicate whether the relationship is positive or negative.",
-                   style = "margin-bottom: 20px; padding: 10px; background-color: #f8f9fa; border-left: 3px solid #2196F3;"),
-                 radioButtons("guess3", "Select the data generating mechanism:",
-                              choices = c("Linear" = "linear",
-                                          "Quadratic" = "quadratic",
-                                          "Cubic" = "cubic",
-                                          "Exponential" = "exponential",
-                                          "Logarithmic" = "logarithmic"),
-                              selected = "linear"
-                 ),
-                 radioButtons("guess3_sign", "Select the relationship direction:",
-                              choices = c("Positive" = "positive",
-                                          "Negative" = "negative"),
-                              selected = "positive"
-                 ),
-                 actionButton("submit3", "Submit Guess"),
-                 actionButton("reload3", "Restart"),
-                 verbatimTextOutput("feedback3"),
-                 verbatimTextOutput("solution3"),
-                 hr(),
-                 # Logo in sidebar
-                 div(class = "sidebar-logo",
-                     img(src = "umc_utrecht_logo.png", alt = "UMC Utrecht Logo"),
-                     div(class = "logo-text",
-                         HTML("Created by Merlin Urbanski"), br(),
-                         HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/people/' target='_blank'>UMCU biostatistics teaching team</a>"))
-                 )
-               ),
-               mainPanel(
-                 plotOutput("scatter3", width = "85%")
-               )
-             )
+    tabItems(
+      # Introduction
+      tabItem(tabName = "intro",
+        fluidRow(
+          box(title = NULL, status = "info", solidHeader = TRUE, width = 12,
+              h3("Welcome to The Correlation Game"),
+              p("In this applet you will be able to practice with the Pearson's correlation and linearity in three different games."),
+              h4("What is Pearson's correlation?"),
+              p("The Pearson's correlation (noted as 'r') is a measure for direction and strength of a linear relationship between two continuous variables:"),
+              tags$ul(
+                tags$li("r = 1 indicates a perfect positive relationship (as x increases, y increases proportionally)"),
+                tags$li("r = -1 indicates a perfect negative relationship (as x increases, y decreases proportionally)"),
+                tags$li("r = 0 indicates no linear relationship")
+              ),
+              h4("Interpretation Guide"),
+              tags$ul(
+                tags$li("Strong correlations (|r| > 0.7): Variables move together in a predictable way"),
+                tags$li("Moderate correlations (0.3 < |r| < 0.7): Some relationship exists but with more scatter"),
+                tags$li("Weak correlations (|r| < 0.3): Little to no linear relationship")
+              ),
+              p("Remember: Correlation does not imply causation! A strong correlation between two variables does not mean one causes the other."),
+              bsCollapse(
+                id = "math_collapse", open = NULL,
+                bsCollapsePanel("For the math enthusiasts among us (click to expand)",
+                                column(6,
+                                       p("The correlation r between x and y is calculated using the following formula:"),
+                                       plotOutput("pearson_plot", width = "100%", height = "280px"),
+                                       withMathJax(p("From this formula, we can see that for each pair of values \\((x_i, y_i)\\), we check how far each value is from its average (mean). This \"distance from average\" is then standardized by dividing by the standard deviation of \\(X\\) and \\(Y\\), so that the result does not depend on the units (e.g., minutes vs. hours).")),
+                                       withMathJax(p("You can imagine that if both \\(x_i\\) and \\(y_i\\) are relatively the same distance above (or below) their averages (in other words, they move in the same direction) then they contribute positively to the correlation. If one is above average and the other is below, they contribute negatively.")),
+                                       withMathJax(p("These individual contributions are summed up and then divided by \\(n−1\\) to get the average: this is Pearson's correlation coefficient, \\(r\\). It tells us how strongly and in what direction \\(X\\) and \\(Y\\) move together."))
+                                )
+                )
+              )
+          ),
+          box(width = 12, status = "primary",
+              div(style = "display: flex; align-items: center; gap: 10px;",
+                  div(style = "flex: 1;",
+                      HTML("Created by Merlin Urbanski"), br(),
+                      HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/people/' target='_blank'>UMCU biostatistics teaching team</a>")),
+                  img(src = "umc_utrecht_logo.png", alt = "UMC Utrecht Logo", style = "width: 150px; height: auto;")
+              )
+          )
+        )
+      ),
+      # Game 1
+      tabItem(tabName = "game1",
+        fluidRow(
+          column(5,
+            box(title = "Controls", status = "primary", solidHeader = TRUE, width = NULL,
+                h4("Instruction:", style = "color: #2196F3; margin-bottom: 10px;"),
+                p("Out of the four options select the correct correlation strength between X and Y that you see in the scatterplot.",
+                  style = "margin-bottom: 20px; padding: 10px; background-color: #f8f9fa; border-left: 3px solid #2196F3;"),
+                uiOutput("guess1_ui"),
+                actionButton("submit1", "Submit Guess", class = "btn-primary", style = "width: 100%;"),
+                br(), br(),
+                actionButton("reload1", "Restart", class = "btn-warning", style = "width: 100%;"),
+                br(), br(),
+                verbatimTextOutput("feedback1"),
+                verbatimTextOutput("solution1"),
+                hr(),
+                div(style = "display: flex; align-items: center; gap: 7px;",
+                    div(style = "flex: 1; font-size: 0.9em; color: #666;",
+                        HTML("Created by Merlin Urbanski"), br(),
+                        HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/people/' target='_blank'>UMCU biostatistics teaching team</a>")),
+                    img(src = "umc_utrecht_logo.png", alt = "UMC Utrecht Logo", style = "width: 120px; height: auto;")
+                )
+            )
+          ),
+          column(7,
+            box(title = "Scatterplot", status = "info", solidHeader = TRUE, width = NULL,
+                plotOutput("scatter1", height = "450px"))
+          )
+        )
+      ),
+      # Game 2
+      tabItem(tabName = "game2",
+        fluidRow(
+          column(5,
+            box(title = "Controls", status = "primary", solidHeader = TRUE, width = NULL,
+                h4("Instruction:", style = "color: #2196F3; margin-bottom: 10px;"),
+                p("Guess the correlation strength that you see between X and Y in the scatterplot by typing it in the field. You can select the data generating mechanism (the true underlying relationship between X and Y in the scatterplot) between \"Linear only\" (easy) and \"Allow nonlinear\" (harder). Optionally you can try to guess the ranked based Spearman correlation and see how it differs from the \"normal\" Pearson correlation.",
+                  style = "margin-bottom: 20px; padding: 10px; background-color: #f8f9fa; border-left: 3px solid #2196F3;"),
+                radioButtons("mode2", "Data mechanism:",
+                             choices = c("Linear only" = "linear", "Allow nonlinear" = "nonlinear"),
+                             selected = "linear"),
+                h4("Pearson Correlation"),
+                numericInput("guess2", "Your guess for cor(X, Y):", value = 0, step = 0.01),
+                actionButton("submit2", "Submit Guess", class = "btn-primary", style = "width: 100%;"),
+                br(), br(),
+                tags$details(
+                  tags$summary("Advanced: Spearman Correlation",
+                               style = "cursor: pointer; font-weight: bold; color: #337ab7;"),
+                  br(),
+                  p("Spearman correlation measures monotonic relationships using ranks instead of raw values.",
+                    style = "font-size: 12px; color: #666;"),
+                  numericInput("guess2_spearman", "Your guess for Spearman cor(X, Y):", value = 0, step = 0.01),
+                  actionButton("submit2_spearman", "Submit Spearman Guess")
+                ),
+                br(),
+                actionButton("reload2", "Restart", class = "btn-warning", style = "width: 100%;"),
+                br(), br(),
+                verbatimTextOutput("feedback2"),
+                verbatimTextOutput("solution2"),
+                verbatimTextOutput("feedback2_spearman"),
+                verbatimTextOutput("solution2_spearman"),
+                hr(),
+                div(style = "display: flex; align-items: center; gap: 7px;",
+                    div(style = "flex: 1; font-size: 0.9em; color: #666;",
+                        HTML("Created by Merlin Urbanski"), br(),
+                        HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/people/' target='_blank'>UMCU biostatistics teaching team</a>")),
+                    img(src = "umc_utrecht_logo.png", alt = "UMC Utrecht Logo", style = "width: 120px; height: auto;")
+                )
+            )
+          ),
+          column(7,
+            box(title = "Scatterplot", status = "info", solidHeader = TRUE, width = NULL,
+                plotOutput("scatter2", height = "450px"))
+          )
+        )
+      ),
+      # Game 3
+      tabItem(tabName = "game3",
+        fluidRow(
+          column(5,
+            box(title = "Controls", status = "primary", solidHeader = TRUE, width = NULL,
+                h4("Instruction:", style = "color: #2196F3; margin-bottom: 10px;"),
+                p("Select the correct data generating mechanism (the true underlying relationship between X and Y in the scatterplot) from the five options below, and also indicate whether the relationship is positive or negative.",
+                  style = "margin-bottom: 20px; padding: 10px; background-color: #f8f9fa; border-left: 3px solid #2196F3;"),
+                radioButtons("guess3", "Select the data generating mechanism:",
+                             choices = c("Linear" = "linear",
+                                         "Quadratic" = "quadratic",
+                                         "Cubic" = "cubic",
+                                         "Exponential" = "exponential",
+                                         "Logarithmic" = "logarithmic"),
+                             selected = "linear"),
+                radioButtons("guess3_sign", "Select the relationship direction:",
+                             choices = c("Positive" = "positive",
+                                         "Negative" = "negative"),
+                             selected = "positive"),
+                actionButton("submit3", "Submit Guess", class = "btn-primary", style = "width: 100%;"),
+                br(), br(),
+                actionButton("reload3", "Restart", class = "btn-warning", style = "width: 100%;"),
+                br(), br(),
+                verbatimTextOutput("feedback3"),
+                verbatimTextOutput("solution3"),
+                hr(),
+                div(style = "display: flex; align-items: center; gap: 7px;",
+                    div(style = "flex: 1; font-size: 0.9em; color: #666;",
+                        HTML("Created by Merlin Urbanski"), br(),
+                        HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/people/' target='_blank'>UMCU biostatistics teaching team</a>")),
+                    img(src = "umc_utrecht_logo.png", alt = "UMC Utrecht Logo", style = "width: 120px; height: auto;")
+                )
+            )
+          ),
+          column(7,
+            box(title = "Scatterplot", status = "info", solidHeader = TRUE, width = NULL,
+                plotOutput("scatter3", height = "450px"))
+          )
+        )
+      )
     )
   )
 )
@@ -261,6 +249,24 @@ server <- function(input, output, session) {
       theme(plot.margin = margin(0, 0, 0, 0))
     p
   })
+
+  # Global download button (top-right)
+  output$download_app <- downloadHandler(
+    filename = function() "correlation_app.R",
+    content = function(file) {
+      # Fetch from GitHub (raw file URL for reliability)
+      raw_url <- "https://raw.githubusercontent.com/EducationTeamJC/shiny_correlation/ceba8e92b43a52e5e26b8ef9207784b81bcf2c5a/correlation_app.R"
+      # Try a quiet binary download; fallback to connection if needed
+      tryCatch({
+        utils::download.file(raw_url, destfile = file, mode = "wb", quiet = TRUE)
+      }, error = function(e) {
+        con <- url(raw_url, open = "rb")
+        on.exit(try(close(con), silent = TRUE), add = TRUE)
+        bin <- readBin(con, what = "raw", n = 1e7)
+        writeBin(bin, file)
+      })
+    }
+  )
 
 
   # ==== GAME 1: Linear generator with multiple-choice guesses ====

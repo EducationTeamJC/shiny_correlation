@@ -1,0 +1,13 @@
+name: correlation_app
+title: correlation_app
+username: utrecht-university
+account: utrecht-university
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 15972070
+bundleId: 11134149
+url: https://utrecht-university.shinyapps.io/correlation_app/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: README.md
