@@ -23,7 +23,7 @@ ui <- fluidPage(
         border: none !important;
         margin-bottom: 0 !important;
       }
-      
+
       h1 {
         background-color: #2196F3;
         color: white !important;
@@ -31,7 +31,7 @@ ui <- fluidPage(
         padding: 1em 1.5em;
         font-weight: 500;
       }
-      
+
       .sidebar-logo {
         width: 100%;
         margin: 2em 0 1em 0;
@@ -63,9 +63,9 @@ ui <- fluidPage(
       }
     "))
   ),
-  
+
   titlePanel("The Correlation Game"),
-  
+
   tabsetPanel(
     # Introduction tab
     tabPanel("Introduction",
@@ -73,12 +73,12 @@ ui <- fluidPage(
                column(12,
                       h3("Welcome to The Correlation Game"),
                       p("In this applet you will be able to practice with the Pearson's correlation and linearity in three different games."),
-                      
+
                       h4("What is Pearson's correlation?"),
                       p("The Pearson's correlation (noted as 'r') is a measure for direction and strength of a linear relationship between two continuous variables:"),
                       tags$ul(
                         tags$li("r = 1 indicates a perfect positive relationship (as x increases, y increases proportionally)"),
-                        tags$li("r = -1 indicates a perfect negative relationship (as x increases, y decreases proportionally)"),  
+                        tags$li("r = -1 indicates a perfect negative relationship (as x increases, y decreases proportionally)"),
                         tags$li("r = 0 indicates no linear relationship")
                       ),
                       h4("Interpretation Guide"),
@@ -88,7 +88,7 @@ ui <- fluidPage(
                         tags$li("Weak correlations (|r| < 0.3): Little to no linear relationship")
                       ),
                       p("Remember: Correlation does not imply causation! A strong correlation between two variables does not mean one causes the other."),
-                      
+
                       bsCollapse(
                         id = "math_collapse", open = NULL,
                         bsCollapsePanel("For the math enthusiasts among us (click to expand)",
@@ -96,19 +96,19 @@ ui <- fluidPage(
                                                p("The correlation r between x and y is calculated using the following formula:"),
                                                plotOutput("pearson_plot", width = "100%", height = "280px"),
                                                withMathJax(p("From this formula, we can see that for each pair of values \\((x_i, y_i)\\), we check how far each value is from its average (mean). This \"distance from average\" is then standardized by dividing by the standard deviation of \\(X\\) and \\(Y\\), so that the result does not depend on the units (e.g., minutes vs. hours).")),
-                                               
-                                               withMathJax(p("You can imagine that if both \\(x_i\\) and \\(y_i\\) are relatively the same distance above (or below) their averages — in other words, they move in the same direction — then they contribute positively to the correlation. If one is above average and the other is below, they contribute negatively.")),
-                                               
+
+                                               withMathJax(p("You can imagine that if both \\(x_i\\) and \\(y_i\\) are relatively the same distance above (or below) their averages (in other words, they move in the same direction) then they contribute positively to the correlation. If one is above average and the other is below, they contribute negatively.")),
+
                                                withMathJax(p("These individual contributions are summed up and then divided by \\(n−1\\) to get the average: this is Pearson's correlation coefficient, \\(r\\). It tells us how strongly and in what direction \\(X\\) and \\(Y\\) move together."))
                                         )
                         )),
-                      
+
                       hr(),
                       # Logo at bottom left
                       div(class = "sidebar-logo",
                           img(src = "umc_utrecht_logo.png", alt = "UMC Utrecht Logo"),
-                          div(class = "logo-text", 
-                              HTML("Created by <a href='https://www.linkedin.com/in/merlin-urbanski-151ba3268' target='_blank'>Merlin Urbanski</a>"), br(),
+                          div(class = "logo-text",
+                              HTML("Created by Merlin Urbanski"), br(),
                               HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/people/' target='_blank'>UMCU biostatistics teaching team</a>"))
                       )
                )
@@ -119,7 +119,7 @@ ui <- fluidPage(
              sidebarLayout(
                sidebarPanel(
                  h4("Instruction:", style = "color: #2196F3; margin-bottom: 10px;"),
-                 p("Out of the four options select the correct correlation strength between X and Y that you see in the scatterplot.", 
+                 p("Out of the four options select the correct correlation strength between X and Y that you see in the scatterplot.",
                    style = "margin-bottom: 20px; padding: 10px; background-color: #f8f9fa; border-left: 3px solid #2196F3;"),
                  uiOutput("guess1_ui"),
                  actionButton("submit1", "Submit Guess"),
@@ -130,8 +130,8 @@ ui <- fluidPage(
                  # Logo in sidebar
                  div(class = "sidebar-logo",
                      img(src = "umc_utrecht_logo.png", alt = "UMC Utrecht Logo"),
-                     div(class = "logo-text", 
-                         HTML("Created by <a href='https://www.linkedin.com/in/merlin-urbanski-151ba3268' target='_blank'>Merlin Urbanski</a>"), br(),
+                     div(class = "logo-text",
+                         HTML("Created by Merlin Urbanski"), br(),
                          HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/people/' target='_blank'>UMCU biostatistics teaching team</a>"))
                  )
                ),
@@ -145,7 +145,7 @@ ui <- fluidPage(
              sidebarLayout(
                sidebarPanel(
                  h4("Instruction:", style = "color: #2196F3; margin-bottom: 10px;"),
-                 p("Guess the correlation strength that you see between X and Y in the scatterplot by typing it in the field. You can select the data generating mechanism (the true underlying relationship between X and Y in the scatterplot) between \"Linear only\" (easy) and \"Allow nonlinear\" (harder). Optionally you can try to guess the ranked based Spearman correlation and see how it differs from the \"normal\" Pearson correlation.", 
+                 p("Guess the correlation strength that you see between X and Y in the scatterplot by typing it in the field. You can select the data generating mechanism (the true underlying relationship between X and Y in the scatterplot) between \"Linear only\" (easy) and \"Allow nonlinear\" (harder). Optionally you can try to guess the ranked based Spearman correlation and see how it differs from the \"normal\" Pearson correlation.",
                    style = "margin-bottom: 20px; padding: 10px; background-color: #f8f9fa; border-left: 3px solid #2196F3;"),
                  radioButtons("mode2", "Data mechanism:",
                               choices = c("Linear only" = "linear", "Allow nonlinear" = "nonlinear"),
@@ -155,19 +155,19 @@ ui <- fluidPage(
                  numericInput("guess2", "Your guess for cor(X, Y):", value = 0, step = 0.01),
                  actionButton("submit2", "Submit Guess"),
                  br(), br(),
-                 
+
                  # Collapsible panel for Spearman correlation
                  tags$details(
-                   tags$summary("Advanced: Spearman Correlation", 
+                   tags$summary("Advanced: Spearman Correlation",
                                 style = "cursor: pointer; font-weight: bold; color: #337ab7;"),
                    br(),
                    p("Spearman correlation measures monotonic relationships using ranks instead of raw values.",
                      style = "font-size: 12px; color: #666;"),
-                   numericInput("guess2_spearman", "Your guess for Spearman cor(X, Y):", 
+                   numericInput("guess2_spearman", "Your guess for Spearman cor(X, Y):",
                                 value = 0, step = 0.01),
                    actionButton("submit2_spearman", "Submit Spearman Guess")
                  ),
-                 
+
                  br(),
                  actionButton("reload2", "Restart"),
                  verbatimTextOutput("feedback2"),
@@ -178,8 +178,8 @@ ui <- fluidPage(
                  # Logo in sidebar
                  div(class = "sidebar-logo",
                      img(src = "umc_utrecht_logo.png", alt = "UMC Utrecht Logo"),
-                     div(class = "logo-text", 
-                         HTML("Created by <a href='https://www.linkedin.com/in/merlin-urbanski-151ba3268' target='_blank'>Merlin Urbanski</a>"), br(),
+                     div(class = "logo-text",
+                         HTML("Created by Merlin Urbanski"), br(),
                          HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/people/' target='_blank'>UMCU biostatistics teaching team</a>"))
                  )
                ),
@@ -193,11 +193,11 @@ ui <- fluidPage(
              sidebarLayout(
                sidebarPanel(
                  h4("Instruction:", style = "color: #2196F3; margin-bottom: 10px;"),
-                 p("Select the correct data generating mechanism (the true underlying relationship between X and Y in the scatterplot) from the five options below, and also indicate whether the relationship is positive or negative.", 
+                 p("Select the correct data generating mechanism (the true underlying relationship between X and Y in the scatterplot) from the five options below, and also indicate whether the relationship is positive or negative.",
                    style = "margin-bottom: 20px; padding: 10px; background-color: #f8f9fa; border-left: 3px solid #2196F3;"),
                  radioButtons("guess3", "Select the data generating mechanism:",
                               choices = c("Linear" = "linear",
-                                          "Quadratic" = "quadratic", 
+                                          "Quadratic" = "quadratic",
                                           "Cubic" = "cubic",
                                           "Exponential" = "exponential",
                                           "Logarithmic" = "logarithmic"),
@@ -216,8 +216,8 @@ ui <- fluidPage(
                  # Logo in sidebar
                  div(class = "sidebar-logo",
                      img(src = "umc_utrecht_logo.png", alt = "UMC Utrecht Logo"),
-                     div(class = "logo-text", 
-                         HTML("Created by <a href='https://www.linkedin.com/in/merlin-urbanski-151ba3268' target='_blank'>Merlin Urbanski</a>"), br(),
+                     div(class = "logo-text",
+                         HTML("Created by Merlin Urbanski"), br(),
                          HTML("and the <a href='https://datasci-biostat.juliuscentrum.nl/people/' target='_blank'>UMCU biostatistics teaching team</a>"))
                  )
                ),
@@ -234,36 +234,36 @@ server <- function(input, output, session) {
   # Output for intro tab
   output$pearson_plot <- renderPlot({
     # Create a plot that displays the Pearson correlation formula
-    p <- ggplot() + 
-      xlim(3, 7) + 
+    p <- ggplot() +
+      xlim(3, 7) +
       ylim(0, 5) +
       # Main formula
-      annotate("text", x = 5, y = 3.5, 
+      annotate("text", x = 5, y = 3.5,
                label = TeX("$r = \\frac{1}{n-1} \\sum_{i=1}^{n} \\left(\\frac{x_i - \\bar{x}}{s_x}\\right) \\left(\\frac{y_i - \\bar{y}}{s_y}\\right)$"),
                size = 8, hjust = 0.5) +
       # Explanation of components
-      annotate("text", x = 5, y = 2.5, 
-               label = "Where:", 
+      annotate("text", x = 5, y = 2.5,
+               label = "Where:",
                size = 5, hjust = 0.5, fontface = "bold") +
-      annotate("text", x = 5, y = 2, 
+      annotate("text", x = 5, y = 2,
                label = TeX("$r$ = Pearson correlation coefficient"),
                size = 5, hjust = 0.5) +
-      annotate("text", x = 5, y = 1.6, 
+      annotate("text", x = 5, y = 1.6,
                label = TeX("$n$ = number of data points"),
                size = 5, hjust = 0.5) +
-      annotate("text", x = 5, y = 1.2, 
+      annotate("text", x = 5, y = 1.2,
                label = TeX("$\\bar{x}, \\bar{y}$ = sample means of $x$ and $y$"),
                size = 5, hjust = 0.5) +
-      annotate("text", x = 5, y = 0.8, 
+      annotate("text", x = 5, y = 0.8,
                label = TeX("$s_x, s_y$ = sample standard deviations of $x$ and $y$"),
                size = 5, hjust = 0.5) +
       theme_void() +
       theme(plot.margin = margin(0, 0, 0, 0))
     p
   })
-  
-  
-  # ==== GAME 1: Linear generator with multiple-choice guesses ====  
+
+
+  # ==== GAME 1: Linear generator with multiple-choice guesses ====
   genData1 <- function() {
     X         <- runif(50, min = -10, max = 10)
     C         <- runif(1, min = -4, max = 4)
@@ -297,31 +297,31 @@ server <- function(input, output, session) {
     options <- sample(c(true_cor, g2, g3, g4))
     list(df = data.frame(X = X, Y = Y_scaled), true_cor = true_cor, options = options)
   }
-  
+
   # Reactive data+options for Game 1
   rv1    <- reactiveVal(genData1())
   state1 <- reactiveValues(submitted = FALSE)
-  
+
   # UI for multiple-choice
   output$guess1_ui <- renderUI({
     opts <- rv1()$options
     radioButtons("guess1", "Select your guess for cor(X, Y):",
                  choices = setNames(opts, sprintf("%.2f", opts)))
   })
-  
+
   # Observers for Game 1
   observeEvent(input$submit1, { state1$submitted <- TRUE })
   observeEvent(input$reload1, {
     rv1(genData1())
     state1$submitted <- FALSE
   })
-  
+
   # Outputs for Game 1
   output$scatter1 <- renderPlot({
     df <- rv1()$df
-    p  <- ggplot(df, aes(X, Y)) + 
-      geom_point(size = 3, alpha = 0.7) + 
-      coord_fixed() + 
+    p  <- ggplot(df, aes(X, Y)) +
+      geom_point(size = 3, alpha = 0.7) +
+      coord_fixed() +
       theme_minimal() +
       theme(
         axis.text = element_text(size = 14),
@@ -333,7 +333,7 @@ server <- function(input, output, session) {
     if (state1$submitted) p <- p + geom_smooth(method = "lm", se = FALSE, size = 1.5)
     p
   }, height = function() session$clientData$output_scatter1_width * 0.7)
-  
+
   output$feedback1 <- renderText({
     req(state1$submitted)
     cor_val <- rv1()$true_cor
@@ -346,18 +346,18 @@ server <- function(input, output, session) {
       "Incorrect guess."
     }
   })
-  
+
   output$solution1 <- renderText({
     req(state1$submitted)
     paste0("True correlation: ", sprintf("%.2f", rv1()$true_cor))
   })
-  
-  
-  # ==== GAME 2: Reactive data generator with linear/nonlinear mode ====  
+
+
+  # ==== GAME 2: Reactive data generator with linear/nonlinear mode ====
   data2 <- reactive({
-    
+
     input$reload2  # Regenerate data on reload or mode change
-    
+
     X <- runif(50, min = -10, max = 10)
     C <- runif(1, min = -4, max = 4)
     # Branch on the UI mode: linear-only forces exponent = 1
@@ -386,38 +386,38 @@ server <- function(input, output, session) {
         Y_scaled <- (Y_noise - min(Y_noise)) / diff(range(Y_noise)) * 20 - 10
       }
     }
-    
+
     list(
       df       = data.frame(X = X, Y = Y_scaled),
       true_cor = cor(X, Y_scaled),
       true_spearman = cor(X, Y_scaled, method = "spearman")
     )
   })
-  
+
   state2 <- reactiveValues(submitted = FALSE, submitted_spearman = FALSE)
   observeEvent(input$submit2, { state2$submitted <- TRUE })
   observeEvent(input$submit2_spearman, { state2$submitted_spearman <- TRUE })
-  observeEvent(input$reload2, { 
+  observeEvent(input$reload2, {
     state2$submitted <- FALSE
     state2$submitted_spearman <- FALSE
     # Reset input values
     updateNumericInput(session, "guess2", value = 0)
     updateNumericInput(session, "guess2_spearman", value = 0)
   })
-  observeEvent(input$mode2, { 
+  observeEvent(input$mode2, {
     state2$submitted <- FALSE
     state2$submitted_spearman <- FALSE
     # Reset input values when mode changes
     updateNumericInput(session, "guess2", value = 0)
     updateNumericInput(session, "guess2_spearman", value = 0)
   })
-  
+
   output$scatter2 <- renderPlot({
     req(data2())
     df <- data2()$df
     p  <- ggplot(df, aes(X, Y)) +
-      geom_point(size = 3, alpha = 0.7) + 
-      coord_fixed() + 
+      geom_point(size = 3, alpha = 0.7) +
+      coord_fixed() +
       theme_minimal() +
       theme(
         axis.text = element_text(size = 14),
@@ -429,7 +429,7 @@ server <- function(input, output, session) {
     if (state2$submitted || state2$submitted_spearman) p <- p + geom_smooth(method = "lm", se = FALSE, size = 1.5)
     p
   }, height = function() session$clientData$output_scatter2_width * 0.7)
-  
+
   output$feedback2 <- renderText({
     req(state2$submitted)
     val   <- data2()$true_cor
@@ -441,12 +441,12 @@ server <- function(input, output, session) {
     else if (err <= 0.2)                     "Pearson: Good guess!"
     else                                     "Pearson: Almost. Try again!"
   })
-  
+
   output$solution2 <- renderText({
     req(state2$submitted)
     sprintf("True Pearson correlation: %.2f", data2()$true_cor)
   })
-  
+
   output$feedback2_spearman <- renderText({
     req(state2$submitted_spearman)
     val   <- data2()$true_spearman
@@ -458,19 +458,19 @@ server <- function(input, output, session) {
     else if (err <= 0.2)                     "Spearman: Good guess!"
     else                                     "Spearman: Almost. Try again!"
   })
-  
+
   output$solution2_spearman <- renderText({
     req(state2$submitted_spearman)
     sprintf("True Spearman correlation: %.2f", data2()$true_spearman)
   })
-  
+
   # ==== GAME 3: Guess the data relationship ====
   genData3 <- function() {
     # Sample 50 X values
     X <- runif(50, min = -10, max = 10)
-    # Sample either 1, 2, 3, 4, or 5 
+    # Sample either 1, 2, 3, 4, or 5
     mm <- as.numeric(sample(1:5, size = 1))
-    
+
     if (mm == 1) {
       # Generate Y using a linear relationship
       C <- runif(1, min = -4, max = 4)
@@ -480,7 +480,7 @@ server <- function(input, output, session) {
       Y_scaled <- (Y_noise - min(Y_noise)) / diff(range(Y_noise)) * 20 - 10
       relationship <- "linear"
       relationship_sign <- ifelse(C > 0, "positive", "negative")
-      
+
     } else if (mm == 2) {
       # Generate Y using a quadratic relationship
       C <- runif(1, min = -4, max = 4)
@@ -491,7 +491,7 @@ server <- function(input, output, session) {
       Y_scaled <- (Y_noise - min(Y_noise)) / diff(range(Y_noise)) * 20 - 10
       relationship <- "quadratic"
       relationship_sign <- ifelse(C > 0, "positive", "negative")
-      
+
     } else if (mm == 3) {
       # Generate Y using a cubic relationship
       C <- runif(1, min = -4, max = 4)
@@ -502,7 +502,7 @@ server <- function(input, output, session) {
       Y_scaled <- (Y_noise - min(Y_noise)) / diff(range(Y_noise)) * 20 - 10
       relationship <- "cubic"
       relationship_sign <- ifelse(C > 0, "positive", "negative")
-      
+
     } else if (mm == 4){
       # Generate Y using an exponential relationship
       C <- sample(c(-5, -4, 4, 5), size = 1)
@@ -513,7 +513,7 @@ server <- function(input, output, session) {
       Y_scaled <- (Y_noise - min(Y_noise)) / diff(range(Y_noise)) * 20 - 10
       relationship <- "exponential"
       relationship_sign <- ifelse(C > 0, "positive", "negative")
-      
+
     } else {
       # Generate Y using a logarithmic relationship
       C <- sample(c(-5, -4, 4, 5), size = 1)
@@ -526,18 +526,18 @@ server <- function(input, output, session) {
       relationship <- "logarithmic"
       relationship_sign <- ifelse(C > 0, "positive", "negative")
     }
-    
+
     list(
       df = data.frame(X = X, Y = Y_scaled),
       true_relationship = relationship,
       true_relationship_sign = relationship_sign
     )
   }
-  
+
   # Reactive data for Game 3
   rv3    <- reactiveVal(genData3())
   state3 <- reactiveValues(submitted = FALSE)
-  
+
   # Observers for Game 3
   observeEvent(input$submit3, { state3$submitted <- TRUE })
   observeEvent(input$reload3, {
@@ -547,13 +547,13 @@ server <- function(input, output, session) {
     updateRadioButtons(session, "guess3", selected = "linear")
     updateRadioButtons(session, "guess3_sign", selected = "positive")
   })
-  
+
   # Outputs for Game 3
   output$scatter3 <- renderPlot({
     df <- rv3()$df
-    p  <- ggplot(df, aes(X, Y)) + 
-      geom_point(size = 3, alpha = 0.7) + 
-      coord_fixed() + 
+    p  <- ggplot(df, aes(X, Y)) +
+      geom_point(size = 3, alpha = 0.7) +
+      coord_fixed() +
       theme_minimal() +
       theme(
         axis.text = element_text(size = 14),
@@ -564,17 +564,17 @@ server <- function(input, output, session) {
       labs(x = "X", y = "Y")
     p
   }, height = function() session$clientData$output_scatter3_width * 0.7)
-  
+
   output$feedback3 <- renderText({
     req(state3$submitted)
     true_rel <- rv3()$true_relationship
     true_sign <- rv3()$true_relationship_sign
     guess_rel <- input$guess3
     guess_sign <- input$guess3_sign
-    
+
     rel_correct <- (guess_rel == true_rel)
     sign_correct <- (guess_sign == true_sign)
-    
+
     if (rel_correct && sign_correct) {
       "Correct! Well done!"
     } else if (rel_correct && !sign_correct) {
@@ -585,7 +585,7 @@ server <- function(input, output, session) {
       "Incorrect. Try to look at both the shape of the relationship and its direction more carefully."
     }
   })
-  
+
   output$solution3 <- renderText({
     req(state3$submitted)
     true_rel <- rv3()$true_relationship
